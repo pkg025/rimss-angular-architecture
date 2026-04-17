@@ -1,0 +1,23 @@
+<div class="container">
+  <h2>Product Search</h2>
+
+  <input
+    type="text"
+    [formControl]="searchControl"
+    placeholder="Search products..."
+  />
+
+  <div class="product-list">
+    @for (product of products(); track product.id) {
+      <div class="product-card">
+        <h3>{{ product.name }}</h3>
+        <p>₹{{ product.price }}</p>
+        <a [routerLink]="['/product', product.id]">View</a>
+      </div>
+    }
+  </div>
+
+  @if (products().length === 0) {
+    <p>No results found</p>
+  }
+</div>
