@@ -1,23 +1,141 @@
-<div class="container">
-  <h2>Product Search</h2>
-
-  <input
-    type="text"
-    [formControl]="searchControl"
-    placeholder="Search products..."
-  />
-
-  <div class="product-list">
-    @for (product of products(); track product.id) {
-      <div class="product-card">
-        <h3>{{ product.name }}</h3>
-        <p>₹{{ product.price }}</p>
-        <a [routerLink]="['/product', product.id]">View</a>
-      </div>
-    }
+<div class="search-page">
+  <!-- Search Header -->
+  <div class="search-header">
+    <h1 class="search-title">Discover</h1>
+    <div class="search-bar-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input
+        class="search-input"
+        type="text"
+        placeholder="Search by name, category..."
+        [formControl]="searchCtrl"
+        aria-label="Search products"
+      />
+      @if (searchCtrl.value) {
+        <button class="search-clear" (click)="searchCtrl.setValue('')" aria-label="Clear search">×</button>
+      }
+    </div>
+    <p class="search-count">{{ filteredProducts().length }} products</p>
   </div>
 
-  @if (products().length === 0) {
-    <p>No results found</p>
-  }
+  <div class="search-body">
+    <!-- Filter Panel -->
+    <aside class="filter-panel">
+      <h2 class="filter-title">Filter</h2>
+
+      <div class="filter-group">
+        <label class="filter-label">Category</label>
+        @for (cat of categories(); track cat) {
+          <label class="filter-option">
+            <input type="radio" name="category"
+              [value]="cat"
+              [checked]="filter().category === cat"
+              (change)="setCategory(cat)"
+            /> {{ cat }}
+          </label>
+        }
+        <label class="filter-option">
+          <input type="radio" name="category" value=""
+            [checked]="filter().category === ''"
+            (change)="setCategory('')"
+          /> All categories
+        </label>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Price range</label>
+        <div class="price-range">
+          <span>£{{ filter().minPrice }}</span>
+          <span>£{{ filter().maxPrice }}</span>
+        </div>
+        <input type="range" min="0" max="500" step="10"
+          [value]="filter().maxPrice"
+          (input)="setMaxPrice($event)"
+          class="price-slider"
+          aria-label="Maximum price"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-option">
+          <input type="checkbox"
+            [checked]="filter().discounted"
+            (change)="toggleDiscounted()"
+          /> Discounted only
+        </label>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Colour</label>
+        <div class="color-swatches">
+          @for (col of availableColors; track col.name) {
+            <button class="color-swatch"
+              [style.background]="col.hex"
+              [class.selected]="filter().color === col.name"
+              (click)="setColor(col.name)"
+              [attr.title]="col.name"
+              [attr.aria-label]="col.name"
+            ></button>
+          }
+          @if (filter().color) {
+            <button class="color-clear" (click)="setColor('')">Clear</button>
+          }
+        </div>
+      </div>
+
+      <button class="filter-reset" (click)="resetFilters()">Reset all filters</button>
+    </aside>
+
+    <!-- Product Grid -->
+    <main class="product-grid-area">
+      @if (loading()) {
+        <div class="loading-grid">
+          @for (n of [1,2,3,4,5,6]; track n) {
+            <div class="skeleton-card">
+              <div class="skeleton-img"></div>
+              <div class="skeleton-line w80"></div>
+              <div class="skeleton-line w50"></div>
+            </div>
+          }
+        </div>
+      } @else if (filteredProducts().length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">◯</div>
+          <p>No products found</p>
+          <button (click)="resetFilters()">Clear filters</button>
+        </div>
+      } @else {
+        <div class="product-grid">
+          @for (product of filteredProducts(); track product.id) {
+            <article class="product-card" [routerLink]="['/product', product.id]">
+              <div class="card-img-wrap">
+                <img [src]="product.imageUrl" [alt]="product.name" loading="lazy" class="card-img"/>
+                @if (product.discountPercent > 0) {
+                  <span class="discount-badge">-{{ product.discountPercent }}%</span>
+                }
+                @if (product.isNew) {
+                  <span class="new-badge">New</span>
+                }
+                @if (!product.inStock) {
+                  <div class="out-of-stock">Out of stock</div>
+                }
+              </div>
+              <div class="card-body">
+                <p class="card-category">{{ product.category }}</p>
+                <h3 class="card-name">{{ product.name }}</h3>
+                <div class="card-pricing">
+                  <app-price-display [price]="product.price" [discountPercent]="product.discountPercent" />
+                </div>
+                <div class="card-rating">
+                  <app-star-rating [rating]="product.rating" />
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </main>
+  </div>
 </div>

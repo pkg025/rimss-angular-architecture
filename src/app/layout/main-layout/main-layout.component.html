@@ -1,1 +1,19 @@
-<p>main-layout works!</p>
+<div class="rimss-shell">
+  <!-- Global NavBar -->
+  <header class="nav">
+    <a class="nav-brand" routerLink="/search">YCompany</a>
+    <nav class="nav-links">
+      <a routerLink="/search" routerLinkActive="active">Shop</a>
+    </nav>
+  </header>
+
+  <!-- Pluggable Offers Banner (registered via PluginRegistry) -->
+  @if (offersVisible) {
+    <app-offers theme="dark"/>
+  }
+
+  <!-- Routed page content -->
+  <main>
+    <router-outlet/>
+  </main>
+</div>

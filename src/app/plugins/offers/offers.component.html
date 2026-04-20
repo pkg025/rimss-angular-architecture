@@ -1,1 +1,17 @@
-<p>offers works!</p>
+@if (visible()) {
+  <div class="offers-banner" [attr.data-theme]="theme">
+    <div class="offers-inner">
+      <div class="offers-label">Latest Offers</div>
+      <div class="offers-items">
+        @for (offer of offers; track offer.id) {
+          <div class="offer-chip">
+            <span class="offer-badge" [style.background]="offer.badgeColor">{{ offer.title }}</span>
+            <span class="offer-sub">{{ offer.subtitle }}</span>
+            <code class="offer-code">{{ offer.code }}</code>
+          </div>
+        }
+      </div>
+      <button class="offers-close" (click)="hide()" aria-label="Dismiss offers">×</button>
+    </div>
+  </div>
+}

@@ -1,15 +1,20 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit, inject } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { PluginRegistry } from '../../plugins/plugin-registry.service';
 import { OffersComponent } from '../../plugins/offers/offers.component';
-
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [RouterOutlet, OffersComponent],
-  template: `
-    <app-offers></app-offers>
-    <router-outlet></router-outlet>
-  `
+  imports: [RouterModule, OffersComponent],
+  templateUrl: './main-layout.component.html',
+  styleUrl: './main-layout.component.scss'
 })
-export class MainLayoutComponent {}
+export class MainLayoutComponent implements OnInit {
+  private readonly registry = inject(PluginRegistry);
+  offersVisible = false;
+
+  ngOnInit(): void {
+    this.offersVisible = this.registry.isVisible('offers');
+  }
+}

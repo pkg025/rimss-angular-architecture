@@ -1,0 +1,38 @@
+.rimss-shell {
+  min-height: 100vh;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48px;
+  height: 60px;
+  background: white;
+  border-bottom: 1px solid #e8e4dc;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-brand {
+  font-family: 'Georgia', serif;
+  font-size: 22px;
+  font-style: italic;
+  letter-spacing: 0.06em;
+  color: #0D2B55;
+  text-decoration: none;
+}
+
+.nav-links a {
+  font-family: 'Trebuchet MS', sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6b7a8d;
+  text-decoration: none;
+}
+
+.nav-links a.active {
+  color: #0D2B55;
+}
